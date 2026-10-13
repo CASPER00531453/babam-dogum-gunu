@@ -6,6 +6,7 @@ export function isAuthorized(req) {
   return given === expected;
 }
 
+// Vercel Blob iki şekilde bağlanabilir: eski usul token ya da OIDC + store id.
 export function blobConfigured() {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+  return Boolean(process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_STORE_ID);
 }

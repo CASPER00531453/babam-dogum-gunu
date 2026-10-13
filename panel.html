@@ -191,7 +191,7 @@
           d.querySelector('img').src = p.url;
           d.querySelector('button').addEventListener('click', async () => {
             if (!confirm('Bu fotoğraf silinsin mi?')) return;
-            const r = await fetch('/api/photos?url=' + encodeURIComponent(p.url), { method: 'DELETE', headers: { 'x-panel-password': pw } });
+            const r = await fetch('/api/photos?p=' + encodeURIComponent(p.pathname), { method: 'DELETE', headers: { 'x-panel-password': pw } });
             if (r.ok) d.remove(), $('#count').textContent = grid.children.length;
             else alert('Silinemedi');
           });
