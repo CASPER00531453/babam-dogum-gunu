@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>İyi ki Doğdun Babacığım! 🎂</title>
+  <meta name="description" content="13 Ekim 1978 — Dünyanın en iyi babasının doğum günü.">
+  <meta name="theme-color" content="#d61317">
+  <link rel="icon" href="/assets/logo-red.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <canvas id="confetti"></canvas>
+  <div class="balloons" aria-hidden="true"></div>
+
+  <!-- Açılış: hediye kutusu -->
+  <div id="intro" class="intro">
+    <div class="intro-inner">
+      <p class="intro-small">Bugün çok özel bir gün...</p>
+      <button id="giftBtn" class="gift" aria-label="Hediyeyi aç">
+        <span class="gift-lid"></span>
+        <span class="gift-box"></span>
+        <span class="gift-ribbon"></span>
+      </button>
+      <p class="intro-hint">Hediyeni açmak için kutuya dokun 🎁</p>
+    </div>
+  </div>
+
+  <header class="nav">
+    <a href="#top" class="nav-logo"><img src="/assets/logo-red.png" alt="incir sigorta"></a>
+    <nav>
+      <a href="#istatistik">İstatistikler</a>
+      <a href="#dogdugun-gun">1978</a>
+      <a href="#galeri">Galeri</a>
+      <a href="#pasta">Pasta</a>
+      <a href="#mektup">Mektup</a>
+    </nav>
+    <button id="musicBtn" class="music-btn" aria-label="Müziği aç/kapat" title="İyi ki doğdun şarkısı">🎵</button>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <p class="hero-date reveal">13 Ekim 1978 — 13 Ekim <span id="thisYear">2026</span></p>
+      <h1 class="hero-title" id="heroTitle">İyi ki Doğdun Babacığım</h1>
+      <div class="age-wrap reveal">
+        <span class="age-number" id="ageNumber">0</span>
+        <span class="age-label">yaşında<br>ve hâlâ<br>bir numara!</span>
+      </div>
+      <p class="hero-typed"><span id="typed"></span><span class="caret">|</span></p>
+      <div class="ticker reveal" id="ticker" aria-live="off"></div>
+      <a href="#istatistik" class="scroll-down" aria-label="Aşağı kaydır"><span></span></a>
+    </section>
+
+    <!-- HAYAT İSTATİSTİKLERİ -->
+    <section id="istatistik" class="section">
+      <h2 class="section-title reveal">Sayılarla Babam</h2>
+      <p class="section-sub reveal">13 Ekim 1978'den bu saniyeye kadar yaşadığın hayatın eğlenceli hesabı. Sayılar canlı — sen okurken artıyor!</p>
+      <div class="stats" id="stats"></div>
+      <p class="footnote reveal">* Ortalama değerlerle yapılmış tahmini, tamamen sevgi dolu hesaplamalardır 😄</p>
+    </section>
+
+    <!-- DOĞDUĞU GÜN -->
+    <section id="dogdugun-gun" class="section section-red">
+      <h2 class="section-title reveal">Doğduğun Gün</h2>
+      <div class="facts">
+        <div class="fact reveal"><div class="fact-icon">📅</div><div class="fact-k">Gün</div><div class="fact-v" id="weekday">Cuma</div></div>
+        <div class="fact reveal"><div class="fact-icon">♎</div><div class="fact-k">Burç</div><div class="fact-v">Terazi</div><div class="fact-d">Adil, zarif, dengeli</div></div>
+        <div class="fact reveal"><div class="fact-icon">🐎</div><div class="fact-k">Çin Burcu</div><div class="fact-v">At</div><div class="fact-d">Enerjik, çalışkan, özgür ruhlu</div></div>
+        <div class="fact reveal"><div class="fact-icon">🍂</div><div class="fact-k">Mevsim</div><div class="fact-v">Sonbahar</div><div class="fact-d">En güzel renklerin mevsimi</div></div>
+      </div>
+
+      <h3 class="sub-title reveal">1978 yılında dünya...</h3>
+      <div class="year-cards">
+        <div class="year-card reveal"><span>⚽</span><p>Arjantin'de düzenlenen Dünya Kupası'nı ev sahibi Arjantin kazandı.</p></div>
+        <div class="year-card reveal"><span>👾</span><p>Efsanevi atari oyunu <b>Space Invaders</b> piyasaya çıktı.</p></div>
+        <div class="year-card reveal"><span>🐱</span><p><b>Garfield</b> çizgi romanı ilk kez gazetelerde yayımlandı.</p></div>
+        <div class="year-card reveal"><span>👶</span><p>Tüp bebek yöntemiyle dünyaya gelen ilk bebek Louise Brown doğdu.</p></div>
+        <div class="year-card reveal"><span>⛪</span><p>Sen doğduktan sadece 3 gün sonra II. Ioannes Paulus Papa seçildi.</p></div>
+        <div class="year-card reveal"><span>⭐</span><p>Ve en önemlisi: 13 Ekim'de dünyaya bir <b>kahraman</b> geldi!</p></div>
+      </div>
+    </section>
+
+    <!-- ZAMAN ÇİZELGESİ -->
+    <section class="section">
+      <h2 class="section-title reveal">Yolculuğun</h2>
+      <div class="timeline" id="timeline"></div>
+    </section>
+
+    <!-- GALERİ -->
+    <section id="galeri" class="section section-soft">
+      <h2 class="section-title reveal">Anılarımız</h2>
+      <p class="section-sub reveal">Bir fotoğrafa dokun, büyüt ve anılar arasında gezin.</p>
+      <div class="gallery" id="gallery">
+        <div class="gallery-empty">Fotoğraflar yükleniyor...</div>
+      </div>
+    </section>
+
+    <!-- PASTA -->
+    <section id="pasta" class="section">
+      <h2 class="section-title reveal">Bir Dilek Tut ve Mumları Üfle!</h2>
+      <p class="section-sub reveal">Mumlara tek tek dokunarak söndür 🕯️</p>
+      <div class="cake-wrap reveal">
+        <div class="cake" id="cake">
+          <div class="candles" id="candles"></div>
+          <div class="layer layer-top"><span class="drip"></span></div>
+          <div class="layer layer-mid"><span class="cake-text">48</span></div>
+          <div class="layer layer-bot"></div>
+          <div class="plate"></div>
+        </div>
+      </div>
+      <p class="wish" id="wish">&nbsp;</p>
+      <button class="btn" id="relight" hidden>Mumları tekrar yak 🔥</button>
+    </section>
+
+    <!-- SONRAKİ DOĞUM GÜNÜ -->
+    <section class="section section-red countdown-section">
+      <h2 class="section-title reveal" id="countdownTitle">Bir Sonraki Doğum Gününe</h2>
+      <div class="countdown reveal" id="countdown"></div>
+    </section>
+
+    <!-- MEKTUP -->
+    <section id="mektup" class="section">
+      <h2 class="section-title reveal">Sana Bir Mektup</h2>
+      <div class="letter reveal">
+        <p class="letter-hello">Canım Babam,</p>
+        <p>Bugün senin günün! 48 yıl önce bugün dünya biraz daha güzel bir yer oldu. Bana her zaman doğruyu gösteren, düştüğümde kaldıran, yorulduğunda bile gülümsemeyi unutmayan adam sensin.</p>
+        <p>Çalışkanlığınla, dürüstlüğünle ve kocaman yüreğinle her gün bana örnek oluyorsun. Bütün o çaylar, sohbetler, nasihatler ve kahkahalar için teşekkür ederim.</p>
+        <p>Nice sağlıklı, mutlu ve huzurlu yıllara... Seninle gurur duyuyorum.</p>
+        <p class="letter-sign">Seni çok seven evladın ❤️</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <img src="/assets/logo-white.png" alt="incir sigorta" class="footer-logo">
+    <p>İş hayatında da, ailede de bir numara. İyi ki doğdun! ❤️</p>
+    <p class="footer-small">13.10.1978 · Sevgiyle yapıldı</p>
+  </footer>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" hidden>
+    <button class="lb-close" id="lbClose" aria-label="Kapat">✕</button>
+    <button class="lb-nav lb-prev" id="lbPrev" aria-label="Önceki">‹</button>
+    <figure class="lb-figure">
+      <img id="lbImg" alt="">
+    </figure>
+    <button class="lb-nav lb-next" id="lbNext" aria-label="Sonraki">›</button>
+    <div class="lb-bar">
+      <span id="lbCount">1 / 1</span>
+      <button id="lbPlay" class="lb-play">▶ Slayt gösterisi</button>
+    </div>
+  </div>
+
+  <script src="/assets/app.js"></script>
+</body>
+</html>

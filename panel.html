@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Fotoğraf Paneli</title>
+  <link rel="icon" href="/assets/logo-red.png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --red: #d61317; --red-dark: #a50e12; --soft: #fff1f1; --muted: #7d5a5c; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Poppins', system-ui, sans-serif; background: var(--soft); color: #2a1214; }
+    header { background: var(--red); color: #fff; padding: 14px 20px; display: flex; align-items: center; gap: 14px; }
+    header img { height: 36px; }
+    header h1 { font-size: 1.1rem; margin: 0; flex: 1; }
+    header a { color: #fff; font-size: .9rem; }
+    main { max-width: 1000px; margin: 0 auto; padding: 30px 16px 60px; }
+    .card { background: #fff; border-radius: 20px; padding: 26px; box-shadow: 0 16px 40px -20px rgba(165,14,18,.4); margin-bottom: 24px; }
+    .login { max-width: 380px; margin: 60px auto; text-align: center; }
+    input[type=password] { width: 100%; padding: 12px 14px; border: 2px solid #ffd0d0; border-radius: 12px; font: inherit; margin: 12px 0; }
+    input[type=password]:focus { outline: none; border-color: var(--red); }
+    .btn { background: var(--red); color: #fff; border: 0; border-radius: 999px; padding: 11px 24px; font: 600 1rem 'Poppins', sans-serif; cursor: pointer; }
+    .btn:disabled { opacity: .5; cursor: default; }
+    .btn.ghost { background: #fff; color: var(--red); border: 2px solid var(--red); }
+    .err { color: var(--red); min-height: 1.4em; font-size: .9rem; }
+    .drop { border: 3px dashed #ffb3b3; border-radius: 18px; padding: 40px 16px; text-align: center; cursor: pointer; transition: .2s; }
+    .drop.over, .drop:hover { border-color: var(--red); background: var(--soft); }
+    .drop b { color: var(--red); }
+    .drop .big { font-size: 3rem; }
+    .queue { list-style: none; padding: 0; margin: 16px 0 0; }
+    .queue li { display: flex; justify-content: space-between; gap: 10px; padding: 8px 4px; border-bottom: 1px solid #ffe4e4; font-size: .9rem; }
+    .queue .ok { color: #1a8f3c; } .queue .fail { color: var(--red); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+    .ph { position: relative; aspect-ratio: 1; border-radius: 12px; overflow: hidden; background: #eee; }
+    .ph img { width: 100%; height: 100%; object-fit: cover; }
+    .ph button { position: absolute; top: 6px; right: 6px; border: 0; background: rgba(0,0,0,.6); color: #fff; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1rem; }
+    .ph button:hover { background: var(--red); }
+    .row { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    h2 { margin: 0; font-size: 1.2rem; }
+    .muted { color: var(--muted); font-size: .9rem; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="/assets/logo-white.png" alt="incir sigorta">
+    <h1>Fotoğraf Paneli</h1>
+    <a href="/">Siteye dön →</a>
+  </header>
+
+  <main>
+    <form class="card login" id="loginForm">
+      <div style="font-size:2.6rem">🔒</div>
+      <h2>Panel girişi</h2>
+      <input type="password" id="pw" placeholder="Şifre" autocomplete="current-password" required>
+      <button class="btn" type="submit">Giriş yap</button>
+      <p class="err" id="loginErr"></p>
+    </form>
+
+    <div id="app" hidden>
+      <section class="card">
+        <div class="row">
+          <h2>Fotoğraf yükle</h2>
+          <button class="btn ghost" id="logout" type="button">Çıkış</button>
+        </div>
+        <label class="drop" id="drop">
+          <div class="big">📸</div>
+          <p><b>Fotoğrafları seç</b> veya buraya sürükle-bırak</p>
+          <p class="muted">Birden fazla fotoğraf seçebilirsin. Fotoğraflar otomatik olarak küçültülüp yüklenir.</p>
+          <input type="file" id="file" accept="image/*" multiple hidden>
+        </label>
+        <ul class="queue" id="queue"></ul>
+      </section>
+
+      <section class="card">
+        <div class="row">
+          <h2>Galerideki fotoğraflar (<span id="count">0</span>)</h2>
+          <span class="muted">Silmek için ✕'e bas</span>
+        </div>
+        <p class="err" id="listErr"></p>
+        <div class="grid" id="grid"></div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+  (() => {
+    const $ = (s) => document.querySelector(s);
+    const KEY = 'panel-pw';
+    let pw = sessionStorage.getItem(KEY) || '';
+
+    async function login(p) {
+      const r = await fetch('/api/auth', { method: 'POST', headers: { 'x-panel-password': p } });
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(data.error || 'Giriş başarısız');
+    }
+
+    function showApp() {
+      $('#loginForm').hidden = true;
+      $('#app').hidden = false;
+      loadList();
+    }
+
+    $('#loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      $('#loginErr').textContent = '';
+      const p = $('#pw').value;
+      try {
+        await login(p);
+        pw = p; sessionStorage.setItem(KEY, p);
+        showApp();
+      } catch (err) { $('#loginErr').textContent = err.message; }
+    });
+
+    $('#logout').addEventListener('click', () => { sessionStorage.removeItem(KEY); location.reload(); });
+
+    if (pw) login(pw).then(showApp, () => sessionStorage.removeItem(KEY));
+
+    // Fotoğrafı tarayıcıda küçült (Vercel gövde sınırı 4.5MB)
+    async function shrink(file, max = 2000, quality = 0.85) {
+      let src;
+      try { src = await createImageBitmap(file, { imageOrientation: 'from-image' }); }
+      catch (_) {
+        src = await new Promise((res, rej) => {
+          const img = new Image();
+          img.onload = () => res(img); img.onerror = () => rej(new Error('Resim okunamadı'));
+          img.src = URL.createObjectURL(file);
+        });
+      }
+      const w = src.width, h = src.height;
+      const scale = Math.min(1, max / Math.max(w, h));
+      const c = document.createElement('canvas');
+      c.width = Math.round(w * scale); c.height = Math.round(h * scale);
+      c.getContext('2d').drawImage(src, 0, 0, c.width, c.height);
+      let q = quality, blob;
+      do {
+        blob = await new Promise((r) => c.toBlob(r, 'image/jpeg', q));
+        q -= 0.1;
+      } while (blob.size > 3.8 * 1024 * 1024 && q > 0.3);
+      return blob;
+    }
+
+    async function upload(files) {
+      const queue = $('#queue');
+      for (const file of files) {
+        if (!file.type.startsWith('image/')) continue;
+        const li = document.createElement('li');
+        li.innerHTML = `<span></span><span>Hazırlanıyor...</span>`;
+        li.firstChild.textContent = file.name;
+        queue.prepend(li);
+        const status = li.lastChild;
+        try {
+          const blob = await shrink(file);
+          status.textContent = 'Yükleniyor...';
+          const r = await fetch('/api/upload?name=' + encodeURIComponent(file.name), {
+            method: 'POST',
+            headers: { 'x-panel-password': pw, 'content-type': 'application/octet-stream' },
+            body: blob,
+          });
+          const data = await r.json().catch(() => ({}));
+          if (!r.ok) throw new Error(data.error || 'Hata ' + r.status);
+          status.textContent = '✓ Yüklendi'; status.className = 'ok';
+        } catch (err) {
+          status.textContent = '✕ ' + err.message; status.className = 'fail';
+        }
+      }
+      loadList();
+    }
+
+    const drop = $('#drop'), input = $('#file');
+    input.addEventListener('change', () => { upload([...input.files]); input.value = ''; });
+    ['dragenter', 'dragover'].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add('over'); }));
+    ['dragleave', 'drop'].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.remove('over'); }));
+    drop.addEventListener('drop', (e) => upload([...e.dataTransfer.files]));
+
+    async function loadList() {
+      $('#listErr').textContent = '';
+      try {
+        const r = await fetch('/api/photos', { cache: 'no-store' });
+        const data = await r.json();
+        if (data.warning) $('#listErr').textContent = data.warning + ' Vercel panelinden Storage → Blob oluşturup projeye bağla.';
+        const photos = data.photos || [];
+        $('#count').textContent = photos.length;
+        const grid = $('#grid');
+        grid.innerHTML = '';
+        for (const p of photos) {
+          const d = document.createElement('div');
+          d.className = 'ph';
+          d.innerHTML = '<img loading="lazy" alt=""><button title="Sil" aria-label="Sil">✕</button>';
+          d.querySelector('img').src = p.url;
+          d.querySelector('button').addEventListener('click', async () => {
+            if (!confirm('Bu fotoğraf silinsin mi?')) return;
+            const r = await fetch('/api/photos?url=' + encodeURIComponent(p.url), { method: 'DELETE', headers: { 'x-panel-password': pw } });
+            if (r.ok) d.remove(), $('#count').textContent = grid.children.length;
+            else alert('Silinemedi');
+          });
+          grid.appendChild(d);
+        }
+      } catch (err) { $('#listErr').textContent = 'Liste alınamadı: ' + err.message; }
+    }
+  })();
+  </script>
+</body>
+</html>
